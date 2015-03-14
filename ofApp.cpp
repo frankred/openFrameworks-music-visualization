@@ -25,7 +25,6 @@ void tinkerforgeAudioVisualzation::recalculateDimensions(int width, int height){
 	this->outputWidth = width;
 	this->outputHeight = height;
 	this->spectrumBarWidth = this->outputWidth / this->audioBufferSize;
-	printConfig();
 }
 
 void tinkerforgeAudioVisualzation::printConfig(){
