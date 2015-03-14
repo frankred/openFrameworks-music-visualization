@@ -66,7 +66,7 @@ public:
 #endif
 	
 	/* Calculate the power spectrum */
-	void powerSpectrum(int start, float *data, float *window, float *magnitude, float *phase);
+	void powerSpectrum(float *data, float *window, float *magnitude, float *phase);
 	/* ... the inverse */
 	void inversePowerSpectrum(int start, float *finalOut, float *window, float *magnitude,float *phase);	
 	void convToDB(float *in, float *out);

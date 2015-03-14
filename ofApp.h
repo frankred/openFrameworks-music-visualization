@@ -24,29 +24,33 @@ class tinkerforgeAudioVisualzation : public ofBaseApp{
 		void windowResized(int w, int h);
 
 		// tinkerforgeAudioVisuaization
-		static const int OUTPUT_HEIGHT_DEFAULT = 100;
-		static const int OUTPUT_WIDTH_DEFAULT = 300;
+		static const int OUTPUT_HEIGHT_DEFAULT = 200;
+		static const int OUTPUT_WIDTH_DEFAULT = 400;
 		static const int AUDIO_BUFFER_SIZE_DEFAULT = 256;
+		static const int MAX_MAGNITUDE_VALUE = 32;
 		const enum SYSTEM {MONO, STEREO};
 		
 		tinkerforgeAudioVisualzation();
-		tinkerforgeAudioVisualzation(int deviceId, int outputWidth, int outputHeight, int spectrumBarAmount, SYSTEM system);
 		int deviceId;
 		int audioBufferSize;
+		int audioBufferSizeHalf;
+		float spectrumBarWidth;
 		int outputWidth;
 		int outputHeight;
-		int outputHeightCenter;
+		float maxMagnitudeValue;
 		SYSTEM system;
 		
 		unsigned int selectedDeviceId;
 		int getAudioDeviceAmount();
 		int getDeviceIdByConsole(int deviceAmount);
+
+		void printConfig();
 		void printAudioDevices();
 		void initModel();
 		void initGUI();
 		void initAudio();
 		void init();
-		void recalculateDimensions();
+		void recalculateDimensions(int width, int height);
 		
 		void audioReceived 	(float * input, int bufferSize, int nChannels);
 		void audioInputListener (ofxAudioEventArgs &args);

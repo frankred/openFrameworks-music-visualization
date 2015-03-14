@@ -357,56 +357,6 @@ void PowerSpectrum(int NumSamples, float *In, float *Out)
 	delete[]ImagOut;
 }
 
-/*
- * Windowing Functions
- */
-
-//int NumWindowFuncs()
-//{
-//	return 4;
-//}
-
-//char *WindowFuncName(int whichFunction)
-//{
-//	switch (whichFunction) {
-//		default:
-//		case 0:
-//			return "Rectangular";
-//		case 1:
-//			return "Bartlett";
-//		case 2:
-//			return "Hamming";
-//		case 3:
-//			return "Hanning";
-//	}
-//}
-
-void WindowFunc(int whichFunction, int NumSamples, float *in)
-{
-	int i;
-	
-	if (whichFunction == 1) {
-		// Bartlett (triangular) window
-		for (i = 0; i < NumSamples / 2; i++) {
-			in[i] *= (i / (float) (NumSamples / 2));
-			in[i + (NumSamples / 2)] *=
-			(1.0 - (i / (float) (NumSamples / 2)));
-		}
-	}
-	
-	if (whichFunction == 2) {
-		// Hamming
-		for (i = 0; i < NumSamples; i++)
-			in[i] *= 0.54 - 0.46 * cos(2 * M_PI * i / (NumSamples - 1));
-	}
-	
-	if (whichFunction == 3) {
-		// Hanning
-		for (i = 0; i < NumSamples; i++)
-			in[i] *= 0.50 - 0.50 * cos(2 * M_PI * i / (NumSamples - 1));
-	}
-}
-
 void fft::genWindow(int whichFunction, int NumSamples, float *window)
 {
 	int i;
@@ -469,29 +419,31 @@ fft::~fft() {
 }
 
 /* Calculate the power spectrum */
-void fft::powerSpectrum(int start, float *data, float *window, float *magnitude,float *phase) {
+void fft::powerSpectrum(float *data, float *window, float *magnitude,float *phase) {
 	int i;
 	
 	//windowing
 	for (i = 0; i < n; i++) {
-		in_real[i] = data[start + i] * window[i];
+		in_real[i] = data[i] * window[i];
 	}
-	
 	
 	RealFFT(n, in_real, out_real, out_img);
 	
 	for (i = 0; i < half; i++) {
+
 		/* compute power */
 		float power = out_real[i]*out_real[i] + out_img[i]*out_img[i];
+
 		/* compute magnitude and phase */
 		magnitude[i] = sqrt(power);
 		phase[i] = atan2(out_img[i],out_real[i]);
 		
-        //		if (magnitude[i] < 0.000001){ // less than 0.1 nV
-        //			magnitude[i] = 0; // out of range
-        //		} else {
-        //			magnitude[i] = 20.0*log10(magnitude[i] + 1);  // get to to db scale
-        //		}
+		// Convert to db
+        if (magnitude[i] < 0.1){ // less than 0.1 nV
+			magnitude[i] = 0; // out of range
+        } else {
+			magnitude[i] = 10.0 * log10(magnitude[i] + 1);
+        }
 	}
 	
 }
