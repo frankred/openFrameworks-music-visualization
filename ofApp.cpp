@@ -9,6 +9,7 @@ tinkerforgeAudioVisualzation::tinkerforgeAudioVisualzation(){
 	this->audioBufferSizeHalf = this->audioBufferSize / 2;
 	this->maxMagnitudeValue = MAX_MAGNITUDE_VALUE;
 	this->recalculateDimensions(OUTPUT_WIDTH_DEFAULT, OUTPUT_HEIGHT_DEFAULT);
+	this->magnitudeSmoothingTreshold = MAGNITUDE_SMOOTHING_THRESHOLD;
 
 	// Select device
 	printAudioDevices();
@@ -17,6 +18,9 @@ tinkerforgeAudioVisualzation::tinkerforgeAudioVisualzation(){
 	this->window = new float[this->audioBufferSize];
 	this->magnitudes = new float[this->audioBufferSize];
 	this->phases = new float[this->audioBufferSize];
+	this->magnitudesPeaks = new float[this->audioBufferSize];
+	this->magnituesBefore = new float[this->audioBufferSize];
+
 
 	this->printConfig();
 }
@@ -73,6 +77,9 @@ void tinkerforgeAudioVisualzation::initAudio(){
 //--------------------------------------------------------------
 
 void tinkerforgeAudioVisualzation::draw(){
+	this->now = ofGetElapsedTimeMillis();
+	this->drawTimeDelta = this->now - this->lastDrawTime;
+	this->lastDrawTime = this->now ;
 
 	// Create window function for fft to avoid strange fft behaviour
 	myFft->genWindow(1, this->audioBufferSize, this->window);
@@ -96,10 +103,33 @@ void tinkerforgeAudioVisualzation::draw(){
 		distance = preferedDistanceBetweenBars;
 		barWidth = (this->outputWidth / audioBufferSizeHalf) - preferedDistanceBetweenBars;
 	}
-	
+
 	// Draw audio visualization
 	for (int i = 0; i < this->audioBufferSizeHalf; i++){
-		ofRect((i * barWidth) + (i * distance) + 2, this->outputHeight - 2, barWidth, -this->magnitudes[i] * oneMagnitudeInPixel);
+
+		// Bar
+		if(magnitudes[i] > magnituesBefore[i]){
+			ofRect((i * barWidth) + (i * distance) + 2, this->outputHeight - 2, barWidth, -this->magnitudes[i] * oneMagnitudeInPixel);
+			magnituesBefore[i] = this->magnitudes[i];
+		} else {
+			// Smoothing
+			float newMagnitude = magnituesBefore[i] - magnitudeSmoothingTreshold * drawTimeDelta;
+			if(newMagnitude	< magnitudes[i]){
+				newMagnitude = magnitudes[i];
+			}
+			ofRect((i * barWidth) + (i * distance) + 2, this->outputHeight - 2, barWidth, -newMagnitude * oneMagnitudeInPixel);
+			magnituesBefore[i] = newMagnitude;
+		}
+
+
+		// Peak
+		if (this->magnitudes[i] > this->magnitudesPeaks[i]){
+			this->magnitudesPeaks[i] = this->magnitudes[i];
+		}
+		ofRect((i * barWidth) + (i * distance) + 2 , this->outputHeight - 2 - this->magnitudesPeaks[i] * oneMagnitudeInPixel, barWidth, -1);
+
+
+		
 	}
 }
 
@@ -120,7 +150,15 @@ void tinkerforgeAudioVisualzation::audioInputListener(ofxAudioEventArgs &ofxAudi
 
 //--------------------------------------------------------------
 void tinkerforgeAudioVisualzation::keyPressed  (int key){ 
-	
+
+	cout << "Keycode: " << key << "\n";
+	if(key == 114){
+		cout << "Reset peaks" << "\n";
+
+		for (int i = 0; i < this->audioBufferSizeHalf; i++){
+			this->magnitudesPeaks[i] = 0;
+		}
+	}
 }
 
 //--------------------------------------------------------------

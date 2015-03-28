@@ -14,7 +14,10 @@ class tinkerforgeAudioVisualzation : public ofBaseApp{
 		void setup();
 		void update(){};
 		void draw();
-		
+		unsigned int now;
+		unsigned int lastDrawTime;
+		unsigned int drawTimeDelta;
+						
 		void keyPressed(int key);
 		void keyReleased(int key);
 		void mouseMoved(int x, int y );
@@ -27,7 +30,8 @@ class tinkerforgeAudioVisualzation : public ofBaseApp{
 		static const int OUTPUT_HEIGHT_DEFAULT = 200;
 		static const int OUTPUT_WIDTH_DEFAULT = 400;
 		static const int AUDIO_BUFFER_SIZE_DEFAULT = 256;
-		static const int MAX_MAGNITUDE_VALUE = 32;
+		static const int MAX_MAGNITUDE_VALUE = 28;
+
 		const enum SYSTEM {MONO, STEREO};
 		
 		tinkerforgeAudioVisualzation();
@@ -65,7 +69,11 @@ class tinkerforgeAudioVisualzation : public ofBaseApp{
 		fft* myFft;
 		float* window;
 		float* magnitudes;
+		float* magnituesBefore;
 		float* phases;
+		float* magnitudesPeaks;
+		const float MAGNITUDE_SMOOTHING_THRESHOLD = 0.025;
+		float magnitudeSmoothingTreshold;
 };
 
 #endif	
