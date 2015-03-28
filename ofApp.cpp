@@ -9,7 +9,7 @@ tinkerforgeAudioVisualzation::tinkerforgeAudioVisualzation(){
 	this->audioBufferSizeHalf = this->audioBufferSize / 2;
 	this->maxMagnitudeValue = MAX_MAGNITUDE_VALUE;
 	this->recalculateDimensions(OUTPUT_WIDTH_DEFAULT, OUTPUT_HEIGHT_DEFAULT);
-	this->magnitudeSmoothingTreshold = MAGNITUDE_SMOOTHING_THRESHOLD;
+	this->magnitudeSmoothingTreshold = 0.025f;
 
 	// Select device
 	printAudioDevices();
@@ -127,9 +127,6 @@ void tinkerforgeAudioVisualzation::draw(){
 			this->magnitudesPeaks[i] = this->magnitudes[i];
 		}
 		ofRect((i * barWidth) + (i * distance) + 2 , this->outputHeight - 2 - this->magnitudesPeaks[i] * oneMagnitudeInPixel, barWidth, -1);
-
-
-		
 	}
 }
 

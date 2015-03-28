@@ -72,7 +72,6 @@ class tinkerforgeAudioVisualzation : public ofBaseApp{
 		float* magnituesBefore;
 		float* phases;
 		float* magnitudesPeaks;
-		const float MAGNITUDE_SMOOTHING_THRESHOLD = 0.025;
 		float magnitudeSmoothingTreshold;
 };
 
