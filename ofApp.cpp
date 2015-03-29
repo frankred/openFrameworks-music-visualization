@@ -105,6 +105,7 @@ void tinkerforgeAudioVisualzation::draw(){
 	}
 
 	// Draw audio visualization
+	float newMagnitude;
 	for (int i = 0; i < this->audioBufferSizeHalf; i++){
 
 		// Bar
@@ -113,7 +114,7 @@ void tinkerforgeAudioVisualzation::draw(){
 			magnituesBefore[i] = this->magnitudes[i];
 		} else {
 			// Smoothing
-			float newMagnitude = magnituesBefore[i] - magnitudeSmoothingTreshold * drawTimeDelta;
+			newMagnitude = magnituesBefore[i] - magnitudeSmoothingTreshold * drawTimeDelta;
 			if(newMagnitude	< magnitudes[i]){
 				newMagnitude = magnitudes[i];
 			}
